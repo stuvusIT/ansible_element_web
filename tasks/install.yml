@@ -1,0 +1,39 @@
+---
+- name: Download Riot archive
+  get_url:
+    url: "{{ riot_web_archive_url }}"
+    dest: "{{ global_cache_dir }}/riot-web-{{ riot_web_checksum.split(':')[-1][:40] }}.tar.gz"
+    checksum: "{{ riot_web_checksum }}"
+  become: False
+  delegate_to: localhost
+
+- name: Clear unarchive target directory
+  file:
+    path: /opt/riot-web-versions/{{ riot_web_checksum.split(':')[-1][:40] }}
+    state: absent
+
+- name: Create unarchive target directory
+  file:
+    path: /opt/riot-web-versions/{{ riot_web_checksum.split(':')[-1][:40] }}
+    state: directory
+
+- name: Unpack Riot archive
+  unarchive:
+    src: "{{ global_cache_dir }}/riot-web-{{ riot_web_checksum.split(':')[-1][:40] }}.tar.gz"
+    dest: /opt/riot-web-versions/{{ riot_web_checksum.split(':')[-1][:40] }}
+
+- name: Get base name of the Riot path
+  find:
+    paths: /opt/riot-web-versions/{{ riot_web_checksum.split(':')[-1][:40] }}
+    file_type: directory
+  register: _riot_web_base_name
+
+- name: Set the symlink to the installed Riot version
+  file:
+    src: "{{ _riot_web_base_name.files[0].path }}"
+    dest: /tmp/riot-web-symlink
+    state: link
+
+# mv is atomic and we want the activation of the new version to be atomic
+- name: Move the symlink into its place
+  command: mv -Tf /tmp/riot-web-symlink /opt/riot-web
