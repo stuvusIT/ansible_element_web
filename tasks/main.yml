@@ -1,0 +1,13 @@
+---
+- name: Retrieve Riot symlink target
+  stat:
+    path: /opt/riot-web
+  register: _riot_web_symlink_stat
+
+- include_tasks: install.yml
+  when: riot_web_checksum.split(':')[-1][:40] not in (_riot_web_symlink_stat.stat.lnk_target | default(""))
+
+- name: Set Riot config
+  copy:
+    content: "{{ riot_web_config | to_nice_json }}\n"
+    dest: "{{ riot_web_write_config_to_path }}"
