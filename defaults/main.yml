@@ -1,2 +1,2 @@
 ---
-riot_web_write_config_to_path: /opt/riot-web/config.json
+element_web_write_config_to_path: /opt/element-web/config.json
