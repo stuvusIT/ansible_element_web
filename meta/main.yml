@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: haslersn
-  description: Browser based matrix client; see https://github.com/vector-im/riot-web
+  description: Browser based matrix client; see https://github.com/vector-im/element-web
   company: stuvus (https://stuvus.uni-stuttgart.de)
 
   license: AGPLv3
@@ -21,5 +21,6 @@ galaxy_info:
     - gui
     - messenger
     - mail
+    - riot-web
 
 dependencies: []
